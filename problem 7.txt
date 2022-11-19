@@ -1,0 +1,90 @@
+from cmath import cosh, sqrt
+from ctypes import sizeof
+from turtle import color
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import numpy as np
+import math
+
+Dab = float(0.0000000012)
+k = float(0.001)
+ca0 = float(0.2)
+caf = 0.2893
+L = float(0.001)
+
+def g(m):
+    return m
+
+def f(cA, k, Dab):
+    cA = float(cA)
+    s = (k / Dab) * cA
+    return s
+
+mf = 0
+zf = L
+h = 0.00000001
+z0 = 0
+x = np.arange(0, L, h)
+n = (zf - z0) / h
+n = int(n)
+m0 = -150
+m = [m0]
+e = range(0, n)
+e = list(e)
+i = 0
+while abs(m[i]) > 0.001:
+    Ca = [ca0]
+    m = [m0]
+    for i in e:
+        c = m[i]
+        a = Ca[i]
+        k12 = h * g(c)
+        k22 = h * g((c + k12 / 2))
+        k32 = h * g((c + k22 / 2))
+        k42 = h * g((c + k32))
+        d = a + (1 /6) * (k12 + (2 * k22) + (2 * k32) + k42)
+        Ca.append(float(d))
+
+        k11 = h * f(a, k, Dab)
+        k21 = h * f((a + (k11 / 2)), k, Dab)
+        k31 = h * f((a + (k21 / 2)), k, Dab)
+        k41 = h * f((a + k31), k, Dab)
+        b = c + (1 / 6) * (k11 + (2 * k21) + (2 * k31) + k41)
+        m.append(b)
+
+        if m[-1] < -0.001:
+            continue
+        else:
+            break
+
+    print(m[-1])
+    print(Ca[-1])
+    print("+++++++++++++++++++++++++++")
+    if abs(m[-1]) > 0.1:
+        m0 += 1
+        i = 0
+        continue
+    if abs(m[-1]) > 0.01:
+        m0 += 0.0001
+        continue
+    if abs(m[-1]) < 0.001:
+        break
+            
+print(m[-1])
+print(m[-2])
+print(Ca[-1])
+print(Ca[-2])
+x2 = x[:i+2]
+print(x2[-1])
+
+
+xpoints = np.array(x2)
+ypoints = np.array(Ca)
+
+th = ca0 * ((np.cosh(L * np.sqrt(k / Dab) * (1 - (x2 / L)))) / (np.cosh(L * np.sqrt(k / Dab))))
+
+plt.plot(xpoints, ypoints, color = 'red', marker = "+", markersize = 2)
+plt.plot(xpoints, th, color = 'blue', linewidth = 1)
+
+plt.grid()
+plt.show()
